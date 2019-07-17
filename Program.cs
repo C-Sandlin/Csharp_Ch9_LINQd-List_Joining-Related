@@ -47,6 +47,9 @@ namespace LINQd_List_joinging_related
             // from c in categories 
             // join p in products on c equals p.Category into ps 
             // select new { Category = c, Products = ps }; 
+            
+            //Method syntax - to build list of millionaires
+            // IEnumerable<Customer> MillionairesClub = customers.Where(customer => customer.Balance >= 1000000);
 
             var millionaireReport =
             from customer in customers
@@ -54,12 +57,21 @@ namespace LINQd_List_joinging_related
             join bank in banks on customer.Bank equals bank.Symbol
             select new { Bank = bank.Name, Customer = customer };
 
-            // var millionaires =
-            // from customer in customers
-            // where customer.Balance >= 1000000.00
-            // join bank in banks on customer.Bank equals bank.Symbol
-            // group bank by bank.Name into newGroup
-            // select new { Bank = newGroup, Customer = customers };
+            //Query syntax
+            IEnumerable<IGrouping<string, Customer>> MillionairesPerBank = from millionaire in MillionairesClub
+                group millionaire by millionaire.Bank into bankGroup
+                select bankGroup;
+            
+            Console.WriteLine ("The Millionaires Per Bank:");
+            foreach (IGrouping<string, Customer> m in MillionairesPerBank)
+            {
+                Console.WriteLine ($"{m.Key} {m.Count()}");
+
+                foreach (Customer c in m)
+                {
+                    Console.WriteLine (c.Name);
+                }
+            }
 
             foreach (var item in millionaireReport)
             {
